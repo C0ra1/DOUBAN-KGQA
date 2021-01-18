@@ -1,0 +1,812 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基于知识图谱的书籍推荐可视化及问答系统</title>
+    <!--Bootstrap Stylesheet [ REQUIRED ]-->
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../static/images/logo.jpg">
+    <!--Nifty Stylesheet [ REQUIRED ]-->
+    <link href="../static/css/nifty.min.css" rel="stylesheet">
+    <!--Nifty Premium Icon [ DEMONSTRATION ]-->
+    <link href="../static/css/nifty-demo-icons.min.css" rel="stylesheet">
+    <!--Demo [ DEMONSTRATION ]-->
+    <link href="../static/css/nifty-demo-icons.min.css" rel="stylesheet">
+    <link href="../static/css/nifty-demo.min.css" rel="stylesheet">
+    <link href="../static/css/font-awesome.min.css" rel="stylesheet">
+    <!--JAVASCRIPT-->
+    <!--=================================================-->
+    <!--Pace - Page Load Progress Par [OPTIONAL]-->
+    <link href="../static/css/pace.min.css" rel="stylesheet">
+    <script src="../static/js/pace.min.js"></script>
+    <!--jQuery [ REQUIRED ]-->
+    <script src="../static/js/jquery-2.2.4.min.js"></script>
+    <!--BootstrapJS [ RECOMMENDED ]-->
+    <script src="../static/js/bootstrap.min.js"></script>
+    <!--NiftyJS [ RECOMMENDED ]-->
+    <script src="../static/js/nifty.min.js"></script>
+    <script src="../static/js/icons.js"></script>
+    <script src="../static/js/echarts.min.js"></script>
+    <script src="../static/js/tags.js"></script>
+    <!--=================================================-->
+    <!--Demo script [ DEMONSTRATION ]-->
+    <script src="../static/js/nifty-demo.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <style type="text/css">
+        table.gridtable {
+            font-family: verdana, arial, sans-serif;
+            font-size: 11px;
+            color: #333333;
+            border-width: 1px;
+            border-color: #666666;
+            border-collapse: collapse;
+        }
+
+        table.gridtable th {
+            border-width: 1px;
+            padding: 8px;
+            border-style: solid;
+            border-color: #666666;
+            background-color: #dedede;
+        }
+
+        table.gridtable td {
+            border-width: 1px;
+            padding: 8px;
+            border-style: solid;
+            border-color: #666666;
+            background-color: #ffffff;
+        }
+
+        body {
+            background: whitesmoke;
+
+        }
+
+        #mainContentDiv {
+            position: absolute;
+            width: 70%;
+            height: 100%;
+            background: whitesmoke;
+            top: 10%;
+            left: 10%;
+
+        }
+
+        .mainDivMainImgDiv {
+            position: absolute;
+            width: 100%;
+            height: 120px;
+            background: white;
+
+        }
+
+        .mainDivMainInfoiv {
+
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: whitesmoke;
+            top: 130px;
+        }
+
+        .mainInfoSubDiv {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: whitesmoke;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .headLeftDiv {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            left: 4%;
+            top: 25%;
+        }
+
+        .headLeftDivFont {
+            font-weight: 500;
+            /*line-height: 58px;*/
+            font-size: 20px;
+            color: #333;
+        }
+
+        .headRightDiv {
+            position: absolute;
+            width: 40%;
+            height: 100%;
+            right: 2%;
+            top: 20%;
+        }
+
+
+        /*中间的过度的横线*/
+        .link-top {
+            position: absolute;
+            top: 60%;
+            left: 4%;
+            width: 90%;
+            height: 1px;
+            border-top: solid #e8edf3 1px;
+        }
+
+        .headLineBlowDiv {
+            position: absolute;
+            top: 63%;
+            height: 40%;
+            width: 100%;
+        }
+
+
+        /*---------------------------subInfoDiv--------------*/
+        .mainDIvMainInfoDivSubInfoDiv {
+            position: relative;
+            width: 100%;
+            height: 13%;
+            background: white;
+            border: 1px solid #eaeaea;
+        }
+
+
+        .mainDIvMainInfoDivSubInfoDiv:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+
+        .mainDivMainInfoiv_HeadTextDiv {
+            position: absolute;
+            top: 10%;
+            left: 4%;
+            width: 30%;
+            height: 30%;
+            background: rgba(0, 0, 0, 0);
+
+        }
+
+        .mainDivMainInfoiv_mainTextDiv {
+            position: absolute;
+            top: 52%;
+            left: 4%;
+            width: 80%;
+            background: rgba(0, 0, 0, 0);
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            font-size: 12px;
+            color: rgb(102, 102, 102);
+        }
+
+
+        .mainDivMainInfoiv_HeadTextDiv_TextBox {
+            position: absolute;
+            top: 25%;
+            width: 100%;
+            height: 50%;
+
+            background: rgba(0, 0, 0, 0);
+
+        }
+
+        .cardInfoTitle {
+            font-weight: 700;
+            /*color: #1f264d;*/
+            height: 22px;
+            display: inline-block;
+            max-width: 600px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+
+        .rightFlexFont {
+            color: #b3b3b3;
+            font-weight: 500;
+            text-align: right;
+            font-size: 12px;
+            color: rgb(179, 179, 179);
+        }
+
+
+        .InfoDiv_Right_2 {
+            position: absolute;
+            top: 55%;
+            right: 2%;
+            width: 18%;
+            height: 30%;
+            background: rgba(0, 0, 0, 0);
+        }
+
+        #tagsList {
+            position: relative;
+            width: 250px;
+            height: 250px;
+        }
+
+        #tagsList a {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            font-family: Microsoft YaHei;
+            color: gray;
+            font-weight: bold;
+            text-decoration: none;
+            padding: 3px 6px;
+        }
+
+        #tagsList a:hover {
+            color: #249e92;
+            letter-spacing: 2px;
+        }
+
+        #search:focus {
+            border: 1px solid #249e92;
+        }
+
+        .headLeftDivFont {
+            font-weight: 500;
+            font-size: 20px;
+            color: #333;
+        }
+    </style>
+    <link rel="stylesheet" href="./static/layui/css/layui.css">
+</head>
+
+<body>
+    <div id="container" class="effect aside-float aside-bright mainnav-lg">
+        <!--NAVBAR-->
+        <!--===================================================-->
+        <header id="navbar">
+            <div id="navbar-container" class="boxed">
+                <!--Brand logo & name-->
+                <!--================================-->
+                <div class="navbar-header">
+                    <a href="{{ url_for('index') }}" class="navbar-brand">
+                        <img src="../static/images/logo.jpg" alt="Nifty Logo" class="brand-icon">
+                        <div class="brand-title">
+                            <span class="brand-text">问答系统</span>
+                        </div>
+                    </a>
+                </div>
+                <!--================================-->
+                <!--End brand logo & name-->
+                <!--Navbar Dropdown-->
+                <!--================================-->
+                <div class="navbar-content clearfix">
+                    <ul class="nav navbar-top-links pull-left">
+                        <!--Navigation toogle button-->
+                        <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+                        <li class="tgl-menu-btn">
+                            <a class="mainnav-toggle" href="#">
+                                <i class="demo-pli-view-list"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-top-links pull-left">
+                        <h4>基于知识图谱的书籍推荐可视化及问答系统</h4>
+                    </ul>
+                </div>
+                <!--================================-->
+                <!--End Navbar Dropdown-->
+            </div>
+        </header>
+        <!--===================================================-->
+        <!--END NAVBAR-->
+        <div class="boxed">
+            <!--CONTENT CONTAINER-->
+            <!--===================================================-->
+            <div id="content-container">
+                <!--Page content-->
+                <!--===================================================-->
+                <div id="page-content">
+                    <h4 class="text-main pad-btm bord-btm">查询结果可视化</h4>
+                    <div class="row">
+                        <div class="col-lg-6">
+                        </div>
+                        <div class="col-lg-2"></div>
+                        <div class="col-lg-4">
+                            <div class="input-group">
+                                <div>查询方式:
+                                    <label><input type="checkbox" name="method" id="method" value="m">模糊查询</label>
+                                </div>
+                                <input type="text" id="search" class="form-control input-lg"
+                                    placeholder="请输入你要检索的内容（作者、书名等）">
+                                <span class="input-group-addon btn btn-mint" onclick="search()">搜索</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="height: 40px;"></div>
+                    <div class="row">
+                        <div class="col-lg-8" style="height: 400px;" id="guanxi">
+                        </div>
+                        <div class="col-lg-2"></div>
+                        <div class="col-lg-4" id="tagsList">
+                            <a href="#" data="2020">最新</a>
+                            <a href="#" data="编程">编程</a>
+                            <a href="#" data="鲁迅">鲁迅</a>
+                            <a href="#" data="散文">散文</a>
+                            <a href="#" data="名著">名著</a>
+                            <a href="#" data="小王子">小王子</a>
+                            <a href="#" data="三毛">三毛</a>
+                            <a href="#" data="web">web</a>
+                            <a href="#" data="挪威的森林">挪威的森林</a>
+                            <a href="#" data="三体">三体</a>
+                            <a href="#" data="余华">余华</a>
+                            <a href="#" data="悬疑">悬疑</a>
+                            <a href="#" data="东野圭吾">东野圭吾</a>
+                            <a href="#" data="曹雪芹">曹雪芹</a>
+                            <a href="#" data="经济">经济</a>
+                            <a href="#" data="言情">言情</a>
+                            <a href="#" data="诛仙">诛仙</a>
+                            <a href="#" data="校园">校园</a>
+                            <a href="#" data="漫画">漫画</a>
+                            <a href="#" data="Java">Java</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="headLeftDivFont">搜索结果</div>
+                <div name="list" id="list">
+
+                </div>
+
+                <!--===================================================-->
+                <!--End page content-->
+            </div>
+            <!--===================================================-->
+            <!--END CONTENT CONTAINER-->
+            <!--MAIN NAVIGATION-->
+            <!--===================================================-->
+            <nav id="mainnav-container">
+                <div id="mainnav">
+                    <!--Menu-->
+                    <!--================================-->
+                    <div id="mainnav-menu-wrap">
+                        <div class="nano">
+                            <div class="nano-content">
+                                <ul id="mainnav-menu" class="list-group">
+                                    <!--Category name-->
+                                    <li class="list-header">查询系统</li>
+                                    <!--Menu list item-->
+                                    <!--Menu list item-->
+                                    <li>
+                                        <a href="{{ url_for('search') }}">
+                                            <i class="fa fa-search" style="width:24px"></i>
+                                            <span class="menu-title">
+                                                <strong>查询</strong>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <!--Menu list item-->
+                                    <li class="list-divider"></li>
+                                    <!--Category name-->
+                                    <li class="list-header">问答系统</li>
+                                    <!--Menu list item-->
+                                    <li>
+                                        <a href="{{ url_for('KGQA') }}">
+                                            <i class="fa fa-question-circle" style="width:24px"></i>
+                                            <span class="menu-title">问答</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!--================================-->
+                    <!--End menu-->
+                </div>
+            </nav>
+            <!--===================================================-->
+            <!--END MAIN NAVIGATION-->
+        </div>
+        <!-- FOOTER -->
+        <!--===================================================-->
+        <footer id="footer">
+
+            <p class="pad-lft">Copyright&#0169; 2020 FZU &nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;All Rights Reserved </p>
+
+        </footer>
+        <!--===================================================-->
+        <!-- END FOOTER -->
+        <!-- SCROLL PAGE BUTTON -->
+        <!--===================================================-->
+        <button class="scroll-top btn">
+            <i class="pci-chevron chevron-up"></i>
+        </button>
+        <!--===================================================-->
+    </div>
+    <!--===================================================-->
+    <!-- END OF CONTAINER -->
+
+    <script type="text/javascript">
+        $(document).keypress(function (e) {
+            // 回车键事件  
+            if (e.which == 13) {
+                search();
+            }
+        });
+        window.onresize = function () {
+
+            myChart.resize();
+        }
+
+        $.ajaxSetup({ async: false });
+        var myChart = echarts.init(document.getElementById("guanxi"));
+        myChart.showLoading();
+
+        myChart.hideLoading();
+        option = {
+            title: {
+                textStyle: {
+                    fontWeight: "lighter",
+                }
+            },
+            // 工具箱
+            toolbox: {
+                // 显示工具箱
+                show: true,
+                feature: {
+                    mark: {
+                        show: true
+                    },
+                    // 还原
+                    restore: {
+                        show: true
+                    },
+                    // 保存为图片
+                    saveAsImage: {
+                        show: true
+                    }
+                }
+            },
+            animationDurationUpdate: 1500,
+            animationEasingUpdate: 'quinticInOut',
+            legend: [
+                {
+                    orient: 'horizontal',
+                    show: true,
+                    top: '90%',
+                    selected: {
+                        '小说': false,
+                        '编程': false,
+                        'web': false,
+                        '算法': false,
+                        '神经网络': false,
+                        '科技': false,
+                        '名著': false,
+                        '推理': false,
+                        '悬疑': false,
+                        '青春': false,
+                        '言情': false,
+                        '校园': false,
+                        '经济': false,
+                        '漫画': false,
+                        '散文': false,
+                        '其他': false
+                    },
+                    data: ['小说', '编程', 'web', '算法', '神经网络', '科技', '名著', '推理', '悬疑', '青春', '言情', '校园', '经济', '漫画', '散文', '其他']
+                },
+                {
+                    orient: 'horizontal',
+                    show: true,
+                    data: ['作者', '分类', '出版年份']
+                }
+            ],
+            series: [
+                {
+                    type: 'graph',
+                    layout: 'force',
+                    symbolSize: 50,
+                    roam: true,
+                    edgeSymbol: ['circle', 'arrow'],
+                    edgeSymbolSize: [4, 4],
+                    edgeLabel: {
+                        normal: {
+                            show: true,
+                            textStyle: {
+                                fontSize: 10,
+                                color: "#000000"
+                            },
+                            formatter: "{c}"
+                        }
+                    },
+                    force: {
+                        repulsion: 2500,
+                        edgeLength: [10, 100]
+                    },
+                    focusNodeAdjacency: true,
+                    draggable: true,
+                    roam: true,
+                    categories: [{
+                        name: '作者',
+                    }, {
+                        name: '分类',
+                    }, {
+                        name: '出版年份',
+                    }, {
+                        name: '小说',
+                    }, {
+                        name: '编程',
+                    }, {
+                        name: 'web',
+                    }, {
+                        name: '算法',
+                    }, {
+                        name: '神经网络',
+                    }, {
+                        name: '科技',
+                    }, {
+                        name: '名著',
+                    }, {
+                        name: '推理',
+                    }, {
+                        name: '悬疑',
+                    }, {
+                        name: '青春',
+                    }, {
+                        name: '言情',
+                    }, {
+                        name: '校园',
+                    }, {
+                        name: '经济',
+                    }, {
+                        name: '漫画',
+                    }, {
+                        name: '散文',
+                    }, {
+                        name: '其他',
+                    }
+                    ],
+                    label: {
+                        normal: {
+                            show: true,
+                            textStyle: {
+                                fontSize: 10
+                            },
+                        }
+                    },
+                    force: {
+                        repulsion: 1000
+                    },
+                    tooltip: {
+                        formatter: function (node) { // 区分连线和节点，节点上额外显示其他数字
+                            if (!node.value) {
+                                return node.data.name;
+                            } else {
+                                return node.data.name + ":" + node.data.showNum;
+                            }
+                        },
+                    },
+                    lineStyle: {
+                        normal: {
+                            opacity: 0.9,
+                            width: 1,
+                            curveness: 0.3
+                        }
+                    },
+                    // progressiveThreshold: 700,
+                    nodes: [],
+                    links: [],
+                }
+            ]
+        };
+
+        myChart.on('click', function (params) {
+            var province = params.name;
+            $.getJSON('/search_name', {
+                name: params.name,
+                method: $("#method").is(":checked")
+            }, function (json) {
+                $("#list").empty();
+                var listHtml = '';
+                // 循环取json中的数据,并呈现在列表中
+                listHtml += '<table class="layui-table"><colgroup><col width="150"><col width="200"><col></colgroup>';
+                listHtml += '<thead><tr><td>类型</td> <td>名称</td></tr></thead>';
+                listHtml += '<tbody>'
+                CA_LIST = {
+                    0: "作者",
+                    1: "分类",
+                    2: "出版年份",
+                    3: "小说",
+                    4: "编程",
+                    5: "web",
+                    6: "算法",
+                    7: "神经网络",
+                    8: "科技",
+                    9: "名著",
+                    10: "推理",
+                    11: "悬疑",
+                    12: "青春",
+                    13: "言情",
+                    14: "校园",
+                    15: "经济",
+                    16: "漫画",
+                    17: "散文",
+                    18: "其他"
+                }
+                $.each(json['data'], function (i) {
+                    // 先遍历data数组，再遍历links数组
+                    listHtml += '<tr>';
+                    listHtml += '<td>' + CA_LIST[json['data'][i].category] + '</td>';
+                    listHtml += '<td>' + json['data'][i].name + '</td>';
+                    listHtml += '</tr>';
+                })
+                listHtml += '</tbody></table>';
+                $("#list").append(listHtml);
+
+                option.series[0].nodes = json.data.map(function (node, idx) {
+                    node.id = idx;
+                    return node;
+                });
+                option.series[0].links = json.links;
+                myChart.setOption(option, true);
+            });
+        });
+
+        function search() {
+            $.getJSON('/search_name', {
+                name: $("#search").val(),
+                method: $("#method").is(":checked")
+            }, function (json) {
+                $("#list").empty();
+                var listHtml = '';
+                // 循环取json中的数据,并呈现在列表中
+                listHtml += '<table class="layui-table"><colgroup><col width="150"><col width="200"><col></colgroup>';
+                listHtml += '<thead><tr><td>类型</td> <td>名称</td></tr></thead>';
+                listHtml += '<tbody>'
+                CA_LIST = {
+                    0: "作者",
+                    1: "分类",
+                    2: "出版年份",
+                    3: "小说",
+                    4: "编程",
+                    5: "web",
+                    6: "算法",
+                    7: "神经网络",
+                    8: "科技",
+                    9: "名著",
+                    10: "推理",
+                    11: "悬疑",
+                    12: "青春",
+                    13: "言情",
+                    14: "校园",
+                    15: "经济",
+                    16: "漫画",
+                    17: "散文",
+                    18: "其他"
+                }
+                $.each(json['data'], function (i) {
+                    // 先遍历data数组，再遍历links数组
+                    listHtml += '<tr>';
+                    listHtml += '<td>' + CA_LIST[json['data'][i].category] + '</td>';
+                    listHtml += '<td>' + json['data'][i].name + '</td>';
+                    listHtml += '</tr>';
+                })
+                listHtml += '</tbody></table>';
+                $("#list").append(listHtml);
+
+                option.series[0].nodes = json.data.map(function (node, idx) {
+                    node.id = idx;
+                    return node;
+                });
+                option.series[0].links = json.links;
+                myChart.setOption(option, true);
+            });
+        }
+
+        $(".col-lg-4 a").click(function () {
+            $.getJSON('/search_name', {
+                name: $(this).attr("data"),
+                method: true
+            }, function (json) {
+
+                $("#list").empty();
+                var listHtml = '';
+                // 循环取json中的数据,并呈现在列表中
+                listHtml += '<table class="layui-table"><colgroup><col width="150"><col width="200"><col></colgroup>';
+                listHtml += '<thead><tr><td>类型</td> <td>名称</td></tr></thead>';
+                listHtml += '<tbody>'
+                CA_LIST = {
+                    0: "作者",
+                    1: "分类",
+                    2: "出版年份",
+                    3: "小说",
+                    4: "编程",
+                    5: "web",
+                    6: "算法",
+                    7: "神经网络",
+                    8: "科技",
+                    9: "名著",
+                    10: "推理",
+                    11: "悬疑",
+                    12: "青春",
+                    13: "言情",
+                    14: "校园",
+                    15: "经济",
+                    16: "漫画",
+                    17: "散文",
+                    18: "其他"
+                }
+                $.each(json['data'], function (i) {
+                    // 先遍历data数组，再遍历links数组
+                    listHtml += '<tr>';
+                    listHtml += '<td>' + CA_LIST[json['data'][i].category] + '</td>';
+                    listHtml += '<td>' + json['data'][i].name + '</td>';
+                    listHtml += '</tr>';
+                })
+                listHtml += '</tbody></table>';
+                $("#list").append(listHtml);
+
+                option.series[0].nodes = json.data.map(function (node, idx) {
+                    node.id = idx;
+                    return node;
+                });
+                option.series[0].links = json.links;
+                myChart.setOption(option, true);
+            })
+        });
+
+        $("td").click(function () {
+            console.log('click')
+            $.getJSON('/search_name', {
+                name: $(this).attr("data"),
+                method: true
+            }, function (json) {
+
+                $("#list").empty();
+                var listHtml = '';
+                // 循环取json中的数据,并呈现在列表中
+                listHtml += '<table class="layui-table"><colgroup><col width="150"><col width="200"><col></colgroup>';
+                listHtml += '<thead><tr><td>类型</td> <td>名称</td></tr></thead>';
+                listHtml += '<tbody>'
+                CA_LIST = {
+                    0: "作者",
+                    1: "分类",
+                    2: "出版年份",
+                    3: "小说",
+                    4: "编程",
+                    5: "web",
+                    6: "算法",
+                    7: "神经网络",
+                    8: "科技",
+                    9: "名著",
+                    10: "推理",
+                    11: "悬疑",
+                    12: "青春",
+                    13: "言情",
+                    14: "校园",
+                    15: "经济",
+                    16: "漫画",
+                    17: "散文",
+                    18: "其他"
+                }
+                $.each(json['data'], function (i) {
+                    // 先遍历data数组，再遍历links数组
+                    listHtml += '<tr>';
+                    listHtml += '<td>' + CA_LIST[json['data'][i].category] + '</td>';
+                    listHtml += '<td>' + json['data'][i].name + '</td>';
+                    listHtml += '</tr>';
+                })
+                listHtml += '</tbody></table>';
+                $("#list").append(listHtml);
+
+                option.series[0].nodes = json.data.map(function (node, idx) {
+                    node.id = idx;
+                    return node;
+                });
+                option.series[0].links = json.links;
+                myChart.setOption(option, true);
+            })
+        });
+    </script>
+</body>
+
+</html>

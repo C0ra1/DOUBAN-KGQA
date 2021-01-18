@@ -1,0 +1,437 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基于知识图谱的书籍推荐可视化及问答系统</title>
+    <!--Bootstrap Stylesheet [ REQUIRED ]-->
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../static/images/logo.jpg">
+    <!--Nifty Stylesheet [ REQUIRED ]-->
+    <link href="../static/css/nifty.min.css" rel="stylesheet">
+    <!--Nifty Premium Icon [ DEMONSTRATION ]-->
+    <link href="../static/css/nifty-demo-icons.min.css" rel="stylesheet">
+    <!--Demo [ DEMONSTRATION ]-->
+    <link href="../static/css/nifty-demo-icons.min.css" rel="stylesheet">
+    <link href="../static/css/nifty-demo.min.css" rel="stylesheet">
+    <link href="../static/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../static/css/wiki.css" rel="stylesheet">
+    <!--JAVASCRIPT-->
+    <!--=================================================-->
+    <!--Pace - Page Load Progress Par [OPTIONAL]-->
+    <link href="../static/css/pace.min.css" rel="stylesheet">
+    <script src="../static/js/pace.min.js"></script>
+    <!--jQuery [ REQUIRED ]-->
+    <script src="../static/js/jquery-2.2.4.min.js"></script>
+    <!--BootstrapJS [ RECOMMENDED ]-->
+    <script src="../static/js/bootstrap.min.js"></script>
+    <!--NiftyJS [ RECOMMENDED ]-->
+    <script src="../static/js/nifty.min.js"></script>
+    <script src="../static/js/icons.js"></script>
+    <script src="../static/js/echarts.min.js"></script>
+    <!--=================================================-->
+    <!--Demo script [ DEMONSTRATION ]-->
+    <script src="../static/js/nifty-demo.min.js"></script>
+    <style>
+        .headLeftDivFont {
+            font-weight: 500;
+            font-size: 20px;
+            color: #333;
+        }
+    </style>
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+</head>
+
+<body>
+    <div id="container" class="effect aside-float aside-bright mainnav-lg">
+        <!--NAVBAR-->
+        <!--===================================================-->
+        <header id="navbar">
+            <div id="navbar-container" class="boxed">
+                <!--Brand logo & name-->
+                <!--================================-->
+                <div class="navbar-header">
+                    <a href="{{ url_for('index') }}" class="navbar-brand">
+                        <img src="../static/images/logo.jpg" alt="Nifty Logo" class="brand-icon">
+                        <div class="brand-title">
+                            <span class="brand-text">问答系统</span>
+                        </div>
+                    </a>
+                </div>
+                <!--================================-->
+                <!--End brand logo & name-->
+                <!--Navbar Dropdown-->
+                <!--================================-->
+                <div class="navbar-content clearfix">
+                    <ul class="nav navbar-top-links pull-left">
+                        <!--Navigation toogle button-->
+                        <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+                        <li class="tgl-menu-btn">
+                            <a class="mainnav-toggle" href="#">
+                                <i class="demo-pli-view-list"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-top-links pull-left">
+                        <h4>基于知识图谱的书籍推荐可视化及问答系统</h4>
+                    </ul>
+                </div>
+                <!--================================-->
+                <!--End Navbar Dropdown-->
+            </div>
+        </header>
+        <!--===================================================-->
+        <!--END NAVBAR-->
+        <div class="boxed">
+            <!--CONTENT CONTAINER-->
+            <!--===================================================-->
+            <div id="content-container">
+                <!--Page content-->
+                <!--===================================================-->
+                <div id="page-content">
+                    <h4 class="text-main pad-btm bord-btm">问答系统</h4>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="input-group">
+                                <input type="text" id="search" class="form-control input-lg"
+                                    placeholder="请输入你的问题(eg.三毛的作品有哪些？)">
+                                <span class="input-group-addon btn btn-primary" onclick="search()">搜索</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="height: 40px;"></div>
+                    <div class="row">
+                        <div class="col-lg-6" style="height: 600px;" id="guanxi">
+                            <div class="row">
+                                <script src="../static/layui/layui.js"></script>
+                                <script type="text/javascript">
+                                    $(document).keypress(function (e) {
+                                        // 回车键事件  
+                                        if (e.which == 13) {
+                                            search();
+                                        }
+                                    });
+                                    window.onresize = function () {
+
+                                        myChart.resize();
+                                    }
+                                    $.ajaxSetup({ async: false });
+                                    var myChart = echarts.init(document.getElementById("guanxi"));
+                                    myChart.showLoading();
+                                    myChart.hideLoading();
+                                    option = {
+                                        title: {
+                                            textStyle: {
+                                                fontWeight: "lighter",
+                                            }
+                                        },
+                                        toolbox: {
+                                            // 显示工具箱
+                                            show: true,
+                                            feature: {
+                                                mark: {
+                                                    show: true
+                                                },
+                                                // 还原
+                                                restore: {
+                                                    show: true
+                                                },
+                                                // 保存为图片
+                                                saveAsImage: {
+                                                    show: true
+                                                }
+                                            }
+                                        },
+                                        animationDurationUpdate: 1500,
+                                        animationEasingUpdate: 'quinticInOut',
+                                        legend: [
+                                            {
+                                                orient: 'horizontal',
+                                                show: true,
+                                                top: '90%',
+                                                selected: {
+                                                    '小说': false,
+                                                    '编程': false,
+                                                    'web': false,
+                                                    '算法': false,
+                                                    '神经网络': false,
+                                                    '科技': false,
+                                                    '名著': false,
+                                                    '推理': false,
+                                                    '悬疑': false,
+                                                    '青春': false,
+                                                    '言情': false,
+                                                    '校园': false,
+                                                    '经济': false,
+                                                    '漫画': false,
+                                                    '散文': false,
+                                                    '其他': false
+                                                },
+                                                data: ['小说', '编程', 'web', '算法', '神经网络', '科技', '名著', '推理', '悬疑', '青春', '言情', '校园', '经济', '漫画', '散文', '其他']
+                                            },
+                                            {
+                                                orient: 'horizontal',
+                                                show: true,
+                                                data: ['作者', '分类', '出版年份']
+                                            }
+                                        ],
+                                        series: [
+                                            {
+                                                type: 'graph',
+                                                layout: 'force',
+                                                symbolSize: 50,
+                                                edgeSymbol: ['circle', 'arrow'],
+                                                edgeSymbolSize: [4, 4],
+                                                edgeLabel: {
+                                                    normal: {
+                                                        show: true,
+                                                        textStyle: {
+                                                            fontSize: 10
+                                                        },
+                                                        formatter: "{c}"
+                                                    }
+                                                },
+                                                force: {
+                                                    repulsion: 2500,
+                                                    edgeLength: [10, 100]
+                                                },
+                                                focusNodeAdjacency: true,
+                                                draggable: true,
+                                                roam: true,
+                                                categories: [{
+                                                    name: '作者',
+                                                }, {
+                                                    name: '分类',
+                                                }, {
+                                                    name: '出版年份',
+                                                }, {
+                                                    name: '小说',
+                                                }, {
+                                                    name: '编程',
+                                                }, {
+                                                    name: 'web',
+                                                }, {
+                                                    name: '算法',
+                                                }, {
+                                                    name: '神经网络',
+                                                }, {
+                                                    name: '科技',
+                                                }, {
+                                                    name: '名著',
+                                                }, {
+                                                    name: '推理',
+                                                }, {
+                                                    name: '悬疑',
+                                                }, {
+                                                    name: '青春',
+                                                }, {
+                                                    name: '言情',
+                                                }, {
+                                                    name: '校园',
+                                                }, {
+                                                    name: '经济',
+                                                }, {
+                                                    name: '漫画',
+                                                }, {
+                                                    name: '散文',
+                                                }, {
+                                                    name: '其他',
+                                                }
+                                                ],
+                                                label: {
+                                                    normal: {
+                                                        show: true,
+                                                        textStyle: {
+                                                            fontSize: 13
+                                                        },
+                                                    }
+                                                },
+                                                force: {
+                                                    repulsion: 1000
+                                                },
+                                                tooltip: {
+                                                    formatter: function (node) { // 区分连线和节点，节点上额外显示其他数字
+                                                        if (!node.value) {
+                                                            return node.data.name;
+                                                        } else {
+                                                            return node.data.name + ":" + node.data.showNum;
+                                                        }
+                                                    },
+                                                },
+                                                lineStyle: {
+                                                    normal: {
+                                                        opacity: 0.9,
+                                                        width: 1,
+                                                        curveness: 0.3,
+                                                        color: '#000000',
+                                                    }
+                                                },
+                                                // progressiveThreshold: 700,
+                                                nodes: [],
+                                                links: [],
+                                            }
+                                        ]
+                                    };
+                                    myChart.on('click', function (params) {
+                                        var province = params.name;
+                                        $.getJSON('/get_profile', {
+                                            character_name: province,
+
+                                        }, function (json) {
+                                            $("#profile").html(json[0]);
+                                            $("#picture").css("display", "block");
+                                            $("#picture").attr("src", "data:image/jpg;base64," + json[1]);
+                                        });
+                                    });
+                                    function showTable() {
+                                        layui.use('table', function () {
+                                            var table = layui.table;
+                                            table.render({
+                                                elem: '#list'
+                                                , url: '/KGQA_answer_list'
+                                                , title: '用户数据表'
+                                                , where: { name: $("#search").val() }
+                                                , cols: [[
+                                                    { field: 'book', title: '书名', width: 178, fixed: 'left' }
+                                                    , { field: 'author', title: '作者', width: 100 }
+                                                    , { field: 'score', title: '评分', width: 100, sort: true }
+                                                    , { field: 'hot', title: '热度', width: 100, sort: true }
+                                                    , { title: '操作', toolbar: '#barDemo', width: 80 }
+                                                ]]
+                                                , page: false
+                                            });
+                                            //监听行工具事件
+                                            table.on('tool(list)', function (obj) {
+                                                var data = obj.data;
+                                                //console.log(obj)
+                                                if (obj.event === 'show') {
+                                                    $.getJSON('/get_profile', {
+                                                        character_name: data.book,
+
+                                                    }, function (json) {
+                                                        $("#profile").html(json[0]);
+                                                        $("#picture").css("display", "block");
+                                                        $("#picture").attr("src", "data:image/jpg;base64," + json[1]);
+                                                    });
+                                                }
+                                            });
+                                        });
+                                    }
+
+
+                                    function search() {
+                                        $.getJSON('/KGQA_answer', {
+                                            name: $("#search").val(),
+                                        }, function (json) {
+
+                                            option.series[0].nodes = json[0].data.map(function (node, idx) {
+                                                node.id = idx;
+                                                return node;
+                                            });
+                                            option.series[0].links = json[0].links;
+                                            myChart.setOption(option, true);
+                                            $("#profile").html(json[1]);
+                                            $("#picture").css("display", "block");
+                                            $("#picture").attr("src", "data:image/jpg;base64," + json[2]);
+
+                                        });
+                                        showTable();
+                                    }
+                                </script>
+                            </div>
+                            <div class="row" style="height: 40px;"></div>
+                            <div class="row">
+                                <div class="headLeftDivFont">搜索结果</div>
+                                <table class="layui-hide" id="list" lay-filter="list"></table>
+                                <script type="text/html" id="barDemo">
+                                    <a class="layui-btn layui-btn-xs" lay-event="show">查看</a>
+                                </script>
+                            </div>
+                        </div>
+                        <div class="col-lg-1"></div>
+                        <div class="col-lg-4" style="width:200px;height:2000px;">
+                            <div class="row" style="width:200px;height:200px;">
+                                <img id="picture" style="display:none;width:200px;height:200px;" src="">
+                            </div>
+                            <div class="row">
+                                <div class="basic-info ">
+                                    <dl class="basicInfo-block basicInfo-left" id="profile">
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div></div>
+                </div>
+
+
+
+                <!--===================================================-->
+                <!--End page content-->
+            </div>
+            <!--===================================================-->
+            <!--END CONTENT CONTAINER-->
+            <!--MAIN NAVIGATION-->
+            <!--===================================================-->
+            <nav id="mainnav-container">
+                <div id="mainnav">
+                    <!--Menu-->
+                    <!--================================-->
+                    <div id="mainnav-menu-wrap">
+                        <div class="nano">
+                            <div class="nano-content">
+                                <ul id="mainnav-menu" class="list-group">
+                                    <!--Category name-->
+                                    <li class="list-header"> 查询系统</li>
+                                    <!--Menu list item-->
+                                    <!--Menu list item-->
+                                    <li>
+                                        <a href="{{ url_for('search')}}">
+                                            <i class="fa fa-search" style="width:24px"></i>
+                                            <span class="menu-title">
+                                                <strong>查询</strong>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <!--Menu list item-->
+                                    <li class="list-divider"></li>
+                                    <!--Category name-->
+                                    <li class="list-header">问答系统</li>
+                                    <!--Menu list item-->
+                                    <li>
+                                        <a href="{{ url_for('KGQA') }}">
+                                            <i class="fa fa-question-circle" style="width:24px"></i>
+                                            <span class="menu-title">问答</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!--================================-->
+                    <!--End menu-->
+                </div>
+            </nav>
+            <!--===================================================-->
+            <!--END MAIN NAVIGATION-->
+        </div>
+        <!-- FOOTER -->
+        <!--===================================================-->
+        <footer id="footer">
+            <p class="pad-lft">Copyright&#0169; 2020 FZU &nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;All Rights Reserved </p>
+        </footer>
+        <!--===================================================-->
+        <!-- END FOOTER -->
+        <!-- SCROLL PAGE BUTTON -->
+        <!--===================================================-->
+        <button class="scroll-top btn">
+            <i class="pci-chevron chevron-up"></i>
+        </button>
+        <!--===================================================-->
+    </div>
+    <!--===================================================-->
+    <!-- END OF CONTAINER -->
+</body>
+
+</html>
